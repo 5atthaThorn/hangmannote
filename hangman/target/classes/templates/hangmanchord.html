@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #word-container {
+      margin: 20px;
+      font-size: 24px;
+    }
+
+    #letters-container {
+      margin: 20px;
+      cursor: pointer;
+    }
+
+    #message {
+      margin: 20px;
+      font-size: 18px;
+    }
+
+    .letter {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="hangmanCanvas" width="200" height="200"></canvas>
+<div id="guess">จงใส่โน้ตในคอร์ด <span id="guess-chord"></span></div>
+<div id="word-container"></div>
+<div id="letters-container"></div>
+<div id="letter-box"></div>
+<div id="message"></div>
+<div id="timer">Time: <span id="timer-count"></span></div>
+<div id="earn-score"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  const chordList = ['C','D','E','F','G','A','B','Cm','Dm','Em','Fm','Gm','Am','Bm'];
+  let chordTriads = {};
+  chordTriads['C'] = 'CEG';
+  chordTriads['D'] = 'DF#A';
+  chordTriads['E'] = 'EG#B';
+  chordTriads['F'] = 'FAC';
+  chordTriads['G'] = 'GBD';
+  chordTriads['A'] = 'AC#E';
+  chordTriads['B'] = 'BD#F#';
+  chordTriads['Cm'] = 'CD#G';
+  chordTriads['Dm'] = 'DFA';
+  chordTriads['Em'] = 'EGB';
+  chordTriads['Fm'] = 'FG#C';
+  chordTriads['Gm'] = 'GA#D';
+  chordTriads['Am'] = 'ACE';
+  chordTriads['Bm'] = 'BDF#';
+  let selectedChord = '';
+  let selectedTriads = '';
+  let guessedWord = [];
+  let incorrectLetters = [];
+  let incorrectGuessCount = 0;
+  let timer;
+  let gamestart = false;
+  let score = 6000;
+  const canvas = document.getElementById('hangmanCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const lettersContainer = document.getElementById('letters-container');
+  const letterBox = document.getElementById('letter-box');
+  const timerCount = document.getElementById('timer-count');
+  const earnScore = document.getElementById('earn-score');
+  const guessChord = document.getElementById('guess-chord');
+
+  // Select a random word from the words array
+  function selectWord() {
+    selectedChord = chordList[Math.floor(Math.random() * chordList.length)];
+    selectedTriads = chordTriads[selectedChord];
+    guessedWord = Array(selectedTriads.length).fill('_');
+    guessChord.textContent = selectedChord;
+    updateWordDisplay();
+    createLetterButtons();
+  }
+
+  // Update the word display on the web page
+  function updateWordDisplay() {
+    document.getElementById('word-container').innerText = guessedWord.join(' ');
+  }
+
+  // Update the letters display on the web page
+  function updateLettersDisplay() {
+    document.getElementById('letters-container').innerText = incorrectLetters.join(', ');
+  }
+
+  // Draw the hangman figure based on incorrect guesses
+  function drawHangman() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the gallows
+    ctx.beginPath();
+    ctx.moveTo(20, 180);
+    ctx.lineTo(180, 180);
+    ctx.stroke();
+
+    if (incorrectGuessCount >= 1) {
+      // Draw the vertical pole
+      ctx.beginPath();
+      ctx.moveTo(50, 180);
+      ctx.lineTo(50, 20);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 2) {
+      // Draw the horizontal pole
+      ctx.beginPath();
+      ctx.moveTo(50, 20);
+      ctx.lineTo(120, 20);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 3) {
+      // Draw the rope
+      ctx.beginPath();
+      ctx.moveTo(120, 20);
+      ctx.lineTo(120, 40);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 4) {
+      // Draw the head
+      ctx.beginPath();
+      ctx.arc(120, 60, 20, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 5) {
+      // Draw the body
+      ctx.beginPath();
+      ctx.moveTo(120, 80);
+      ctx.lineTo(120, 130);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 6) {
+      // Draw the left leg
+      ctx.beginPath();
+      ctx.moveTo(120, 130);
+      ctx.lineTo(100, 170);
+      ctx.stroke();
+    }
+
+    if (incorrectGuessCount >= 7) {
+      // Draw the right leg
+      ctx.beginPath();
+      ctx.moveTo(120, 130);
+      ctx.lineTo(140, 170);
+      ctx.stroke();
+    }
+  }
+
+  // Create letter buttons and add click event listeners
+  function createLetterButtons() {
+    const note = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    for (let letter of note) {
+      const letterButton = document.createElement('span');
+      letterButton.classList.add('letter');
+      letterButton.innerText = letter;
+      letterButton.addEventListener('click', function() {
+        checkLetter(letter);
+      });
+      letterBox.appendChild(letterButton);
+    }
+  }
+
+  // Check if the guessed letter is in the word
+  function checkLetter(letter) {
+    if (letter.length == 1 & selectedTriads.includes(letter)) {
+        let letterCheck = false;
+        for (let i = 0; i < selectedTriads.length - 1; i++) {
+            if (selectedTriads[i] == letter & selectedTriads[i+1] == '#'){
+                incorrectLetters.push(letter);
+                updateLettersDisplay();
+                incorrectGuessCount++;
+                drawHangman();
+                letterCheck = false;
+                break;
+            } else{
+                letterCheck = true;
+            }
+        }
+        if (letterCheck == true){
+            for (let i = 0; i < selectedTriads.length; i++) {
+                if (selectedTriads[i] === letter) {
+                    guessedWord[i] = letter;
+                }
+            }
+      }
+      updateWordDisplay();
+    } else if (letter.length == 2 & selectedTriads.includes(letter)){
+        for (let i = 0; i < selectedTriads.length; i++) {
+        if (selectedTriads[i] == letter[0] & selectedTriads[i+1] == letter[1]) {
+          guessedWord[i] = letter[0];
+          guessedWord[i+1] = letter[1];
+        }
+      }
+      updateWordDisplay();
+    } else {
+      incorrectLetters.push(letter);
+      updateLettersDisplay();
+      incorrectGuessCount++;
+      drawHangman();
+    }
+
+    // Check if the game is won or lost
+    if (guessedWord.join('') === selectedTriads) {
+      document.getElementById('message').innerText = 'Congratulations! You won!';
+      gamestart = false;
+      earnScore.textContent = score;
+    saveScore();
+    } else if (incorrectGuessCount === 7) {
+      document.getElementById('message').innerText = `Sorry! You lost. The word was: ${selectedTriads}`;
+      score = 0;
+      gamestart = false;
+      earnScore.textContent = score;
+      saveScore();
+    }
+    
+  }
+
+  function startTimer() {
+    let timeRemaining = 60; // Set the time limit in seconds
+    timerCount.textContent = timeRemaining;
+
+    timer = setInterval(function() {
+      timeRemaining--;
+
+      if (gamestart == true){
+        if (timeRemaining >= 0) {
+          timerCount.textContent = timeRemaining;
+          score = score - 100;
+        } else {
+          earnScore.textContent = score;
+          clearInterval(timer);
+          document.getElementById('message').innerText = 'Time is up! Game over.';
+          document.getElementById('letter-box').remove();
+          earnScore.textContent = score;
+          saveScore();
+        }
+      }
+    }, 1000); // Update the timer every second
+  }
+
+  function saveScore() {
+    $.ajax({
+    type: 'POST',
+    url: '/api/savescore',
+    contentType: 'application/json',
+    data: JSON.stringify(score),
+    success: function(response) {
+      console.log('Success:', response);
+      // Handle success response from the server
+      },
+      error: function(error) {
+        console.error('Error:', error);
+        // Handle error
+      }
+    });
+  }
+
+  // Initialize the game
+  function init() {
+    selectWord();
+    updateWordDisplay();
+    createLetterButtons();
+    gamestart = true;
+    startTimer();
+  }
+
+  // Start the game
+  init();
+</script>
+
+</body>
+</html>

@@ -88,10 +88,8 @@
 
   //guessSymbol.textContent = guessNote;
   function setGuessNote(){
-    const idx = Math.floor(Math.random() * symbolList.length);
+    const idx = Math.floor(Math.random() * (symbolList.length - 3));
     guessNote = symbolList[idx];
-    console.log(guessNote)
-    console.log(idx)
     guessSymbol.textContent = guessNote;
   }
 
@@ -163,13 +161,15 @@
   // Create letter buttons
   function createLetterButtons() {
     for (let letter of symbolList) {
-      const letterButton = document.createElement('span');
-      letterButton.classList.add('letter');
-      letterButton.innerText = letter;
-      letterButton.addEventListener('click', function() {
-        addLetterToInput(letter);
-      });
-      letterBox.appendChild(letterButton);
+      if (letter != guessNote) {
+        const letterButton = document.createElement('span');
+        letterButton.classList.add('letter');
+        letterButton.innerText = letter;
+        letterButton.addEventListener('click', function() {
+          addLetterToInput(letter);
+        });
+        letterBox.appendChild(letterButton);
+      }
     }
   }
 

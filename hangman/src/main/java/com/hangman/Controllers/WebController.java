@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class webController{
+public class WebController{
     
     private Users currentUser = null;
 
@@ -25,12 +25,18 @@ public class webController{
     UsersRepository usersRepository; 
     @RequestMapping("/")
     public String index(){
-        return "index";
+        if (isLogin()){
+            return "index";
+        }
+        return "redirect:/login";
     }
     
     @GetMapping("/hangmannote")
     public String hangmanNote() {
-        return "hangmannote";
+        if (isLogin()){
+            return "hangmannote";
+        }
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -82,5 +88,20 @@ public class webController{
         restTemplate.postForObject("http://localhost:8080/api/getusersession", currentUser, String.class);
         System.out.println("Data sent to API successfully!");
     }
+
+    @GetMapping("/signout")
+    public String signout() {
+        currentUser = null;
+        return "redirect:/login";
+    }
+
+    @GetMapping("/hangmanchord")
+    public String hangmanchord(){
+        if (isLogin()){
+            return "hangmanchord";
+        }
+        return "redirect:/login";
+    }
+    
 
 }
