@@ -56,7 +56,7 @@
   <div id="timer">Time: <span id="timer-count"></span></div>
   <div id="message"></div>
   <div id="earn-score"></div>
-
+  <button id="try-again" onclick="restartGame()">Try Again</button>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   
@@ -72,7 +72,7 @@
   let timer;
   let gamestart = false;
   let guessNote = '';
-  let score = 6000;
+  let score = 10;
 
   const canvas = document.getElementById('hangmanCanvas');
   const ctx = canvas.getContext('2d');
@@ -191,6 +191,7 @@
       gamestart = false;
       earnScore.textContent = score;
       saveScore();
+      document.getElementById('try-again').hidden = false;
     } else {
       incorrectGuessCount++;
       drawHangman();
@@ -201,6 +202,7 @@
         score = 0;
         earnScore.textContent = score;
         saveScore();
+        document.getElementById('try-again').hidden = false;
       }
     }
 
@@ -209,7 +211,7 @@
   }
 
   function startTimer() {
-    let timeRemaining = 60; // Set the time limit in seconds
+    let timeRemaining = 10; // Set the time limit in seconds
     timerCount.textContent = timeRemaining;
 
     timer = setInterval(function() {
@@ -218,7 +220,7 @@
       if (gamestart == true){
         if (timeRemaining >= 0) {
           timerCount.textContent = timeRemaining;
-          score = score - 100;
+          score = score - 1;
         } else {
           earnScore.textContent = score;
           clearInterval(timer);
@@ -226,6 +228,7 @@
           document.getElementById('letter-box').remove();
           earnScore.textContent = score;
           saveScore();
+          document.getElementById('try-again').hidden = false;
         }
       }
     }, 1000); // Update the timer every second
@@ -257,10 +260,15 @@
 
   // Initialize the game
   function init() {
+    document.getElementById('try-again').hidden = true;
     setGuessNote();
     createLetterButtons();
     gamestart = true;
     startTimer();
+  }
+
+  function restartGame() {
+    location.reload();
   }
 
   // Start the game
