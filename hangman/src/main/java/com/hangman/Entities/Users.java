@@ -2,6 +2,8 @@ package com.hangman.Entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -9,6 +11,7 @@ import jakarta.persistence.Table;
 @Table(name="users")
 public class Users {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userID;
     @Column(name="username")
     private String username;
