@@ -68,7 +68,6 @@ table .head {
 table .head th {
   padding: 20px 30px;
   font-weight: 600;
-
 }
 
 table .row {
@@ -92,3 +91,11 @@ table .row:nth-child(odd) {
     color: #ffffff; /* Set your desired color here */
   }
   
+label {
+    color: #ffffff;
+}
+
+label[for="password"] {
+    color: #ffffff;
+}
+
