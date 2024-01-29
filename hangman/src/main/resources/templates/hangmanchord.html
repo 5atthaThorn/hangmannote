@@ -1,53 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hangman Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมดนตรีหรรษา By ครูพี่ไม้</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+      .letter-box {
+          width: 50px;
+          height: 50px;
+          margin: 5px;
+          font-size: 20px;
+          display: inline-block; /* Display letters in a row */
+      }
 
-    #word-container {
-      margin: 20px;
-      font-size: 24px;
-    }
-
-    #letters-container {
-      margin: 20px;
-      cursor: pointer;
-    }
-
-    #message {
-      margin: 20px;
-      font-size: 18px;
-    }
-
-    .letter {
-      display: inline-block;
-      margin: 5px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
-  </style>
+      /* Style each letter box */
+      .letter {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          margin: 5px;
+          text-align: center;
+          line-height: 40px;
+          background-color: #FFFFFF; /* Bootstrap primary color */
+          color: #000; /* Text color */
+          border-radius: 5px; /* Rounded corners */
+          cursor: pointer; /* Cursor on hover */
+      }
+    </style>
 </head>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">เกมดนตรีหรรษา By ครูพี่ไม้</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/hangmannote">รวมผลตัวโน๊ต</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/hangmanchord">ทะลุทะลวงตามล่าคอร์ด</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
 <body>
 
-<div id="round">Round: <span id="round-number"></span></div>
-<canvas id="hangmanCanvas" width="200" height="200"></canvas>
-<div id="guess">จงใส่โน้ตในคอร์ด <span id="guess-chord"></span></div>
-<div id="word-container"></div>
-<div id="letters-container"></div>
-<div id="letter-box"></div>
-<div id="message"></div>
-<div id="timer">Time: <span id="timer-count"></span></div>
-<div id="earn-score"></div>
-<button id="next-round-btn" onclick="nextRound()">Next Round</button>
-<button id="try-again" onclick="restartGame()">Try Again</button>
-
+<div class="center container mt-5 rounded" style="max-width: 500px;">
+  <br>
+  <div id="round" style="color: #FFFFFF;">ข้อที่ <span id="round-number" style="color: #FFFFFF"></span></div>
+  <div id="timer" style="color: #FFFFFF">เหลือเวลา <span id="timer-count" style="color: #FFFFFF"></span> วินาที</div>
+  <canvas id="hangmanCanvas" width="200" height="200"></canvas>
+  <div id="guess" style="color: #FFFFFF">จงใส่โน้ตในคอร์ด <span id="guess-chord" style="color: #FFFFFF"></span></div>
+  <div id="word-container" style="color: #FFFFFF; font-size: 25px;"></div>
+  <div id="letters-container" style="color:#A0A0A0"></div>
+  <div id="letter-box"></div>
+  <div id="message" style="color: #FFFFFF"></div>
+  <br>
+  <div id="score-text" style="color: #FFFFFF">รวม <span id="earn-score" style="color: #FFFFFF"></span> คะแนน</div>
+  <button class="btn btn-primary" id="next-round-btn" onclick="nextRound()">ข้อต่อไป</button>
+  <button class="btn btn-danger" id="try-again" onclick="restartGame()">ลองใหม่</button>
+  <br>
+  <div></div>
+</div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   const chordList = ['C','D','E','F','G','A','B','Cm','Dm','Em','Fm','Gm','Am','Bm'];
@@ -86,6 +114,7 @@
   const earnScore = document.getElementById('earn-score');
   const guessChord = document.getElementById('guess-chord');
   const roundNumber = document.getElementById('round-number');
+  const scoreText = document.getElementById('score-text');
 
   function nextRound() {
     if (currentRound < round) {
@@ -94,16 +123,16 @@
       init();
     } else{
       document.getElementById('message').innerText = 'Game Over! All rounds completed.';
-      document.getElementById('next-round-btn').remove();
+      document.getElementById('next-round-btn').hidden = false;
       saveScore();
     }
   }
 
   function resetGame() {
+    scoreText.hidden = true;
     incorrectGuessCount = 0;
     guessedWord = [];
     incorrectLetters = [];
-    score += roundScore;
     roundScore = 2.0;
     timer = null;
     gamestart = true;
@@ -117,7 +146,7 @@
     if (currentRound == round){
       document.getElementById('next-round-btn').hidden = true;
     } else{
-      document.getElementById('next-round-btn').disabled = true;
+      document.getElementById('next-round-btn').hidden = false;
     }
   }
 
@@ -139,6 +168,7 @@
 
   function drawHangman() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "white";
     ctx.beginPath();
     ctx.moveTo(20, 180);
     ctx.lineTo(180, 180);
@@ -252,22 +282,25 @@
     }
 
     if (guessedWord.join('') === selectedTriads) {
-      document.getElementById('message').innerText = 'Congratulations! You won!';
+      document.getElementById('message').innerText = 'ยินดีด้วย คุณชนะ!';
       gamestart = false;
       if (currentRound == round) {
         saveScore();
         document.getElementById('try-again').hidden = false;
+      }else{
+        document.getElementById('next-round-btn').hidden = false;
       }
+      score += roundScore;
+      scoreText.hidden = false;
       earnScore.textContent = score;
-      
-      document.getElementById('next-round-btn').disabled = false;
     } else if (incorrectGuessCount === 7) {
-      document.getElementById('message').innerText = `Sorry! You lost. The word was: ${selectedTriads}`;
+      document.getElementById('message').innerText = `เสียใจด้วย คุณแพ้ โน๊ตที่ถูกต้องคือ ${selectedTriads}`;
       score = 0;
       gamestart = false;
+      scoreText.hidden = false;
       earnScore.textContent = score;
       saveScore();
-      document.getElementById('next-round-btn').disabled = false;
+      document.getElementById('next-round-btn').hidden = true;
       document.getElementById('try-again').hidden = false;
     }
   }
@@ -286,8 +319,9 @@
           earnScore.textContent = score;
           clearInterval(timer);
           gamestart = false;
-          document.getElementById('message').innerText = 'Time is up! Game over.';
+          document.getElementById('message').innerText = 'หมดเวลา';
           document.getElementById('letter-box').remove();
+          scoreText.hidden = false;
           earnScore.textContent = score;
           saveScore();
           document.getElementById('try-again').hidden = false;
@@ -313,7 +347,7 @@
 
   function init() {
     roundNumber.textContent = currentRound;
-    document.getElementById('next-round-btn').disabled = true;
+    document.getElementById('next-round-btn').hidden = true;
     createLetterButtons();
     selectWord();
     updateWordDisplay();
@@ -325,6 +359,7 @@
 
   init();
   document.getElementById('try-again').hidden = true;
+  scoreText.hidden = true;
   startTimer();
 
 </script>
