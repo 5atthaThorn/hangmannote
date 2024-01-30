@@ -21,7 +21,6 @@ public class restController {
     @PostMapping("/getusersession")
     public ResponseEntity<String> getUserSession(@RequestBody Users user){
         currentUser = user;
-        test();
         return ResponseEntity.ok("get user");
     } 
 
@@ -32,9 +31,5 @@ public class restController {
         scores.setUser(currentUser);
         scoresRepository.save(scores);
         return ResponseEntity.ok("Score has been saved.");
-    }
-
-    private void test(){
-        System.out.println(currentUser.getUsername());
     }
 }

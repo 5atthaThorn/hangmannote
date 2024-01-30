@@ -34,28 +34,31 @@
     </style>
 </head>
 <header>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">เกมดนตรีหรรษา By ครูพี่ไม้</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hangmannote">รวมผลตัวโน๊ต</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hangmanchord">ทะลุทะลวงตามล่าคอร์ด</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+          <a class="navbar-brand" href="/">เกมดนตรีหรรษา By ครูพี่ไม้</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                  <li class="nav-item">
+                      <a class="nav-link" href="/hangmannote">รวมผลตัวโน๊ต</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/hangmanchord">ทะลุทะลวงตามล่าคอร์ด</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/viewscore">ประวัติการเล่น</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/signout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </nav>
 </header>
 <body>
 
@@ -73,7 +76,7 @@
   <div id="score-text" style="color: #FFFFFF">รวม <span id="earn-score" style="color: #FFFFFF"></span> คะแนน</div>
   <button class="btn btn-primary" id="next-round-btn" onclick="nextRound()">ข้อต่อไป</button>
   <button class="btn btn-danger" id="try-again" onclick="restartGame()">ลองใหม่</button>
-  <br>
+  <br></br>
   <div></div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

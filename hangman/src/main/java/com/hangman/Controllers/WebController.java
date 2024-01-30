@@ -1,12 +1,18 @@
 package com.hangman.Controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import com.hangman.Entities.Scores;
 import com.hangman.Entities.Users;
+import com.hangman.Repositories.ScoresRepository;
 import com.hangman.Repositories.UsersRepository;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +28,9 @@ public class WebController{
     private RestTemplate restTemplate;
     @Autowired
     UsersRepository usersRepository; 
+    @Autowired
+    private ScoresRepository scoresRepository;
+
     @RequestMapping("/")
     public String index(){
         if (isLogin()){
@@ -83,9 +92,7 @@ public class WebController{
     }
 
     public void sendUser(){
-        System.out.println("test");
         restTemplate.postForObject("http://localhost:8080/api/getusersession", currentUser, String.class);
-        System.out.println("Data sent to API successfully!");
     }
 
     @GetMapping("/signout")
@@ -102,5 +109,22 @@ public class WebController{
         return "redirect:/login";
     }
     
-
+    @GetMapping("/viewscore")
+    public String viewscore(Model model){
+        if (isLogin()){
+            double sumScore = 0.0;
+            List<Scores> userScore = new ArrayList<>();
+            Iterable<Scores> allScore = scoresRepository.findAll();
+            for (var score: allScore){
+                if (score.getUser() != null && (score.getUser().getUserID() == currentUser.getUserID())){
+                    sumScore += score.getScore();
+                    userScore.add(score);
+                }
+            }
+            model.addAttribute("userScore", userScore);
+            model.addAttribute("sumScore", sumScore);
+            return "viewscore";
+        }
+        return "redirect:login";
+    }
 }

@@ -40,38 +40,31 @@
     </nav>
 </header>
 <body>
-    
-    <div class="center container mt-5 rounded">
-        <br>
-        <div class="row justify-content-center">
-            <h1>เลือกเกม</h1>
-            <div class="col-12 col-lg-4">
-              <a href="/hangmannote">
-              <div class="card box-shadow mx-auto my-5" style="width: 18rem;">
-                <img src="note.png" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                  <hr>
-                  <h5 class="card-text">รวมผลตัวโน๊ต</h5>
-                </div>
-                
-              </div>
-          </a>
+    <div class="center container pt-5 rounded">
+        <div class="p-4 rounded border">
+            <h1>ประวัติการเล่น</h1>
+            <br></br>
+            <a th:text="'เล่นทั้งหมด ' + ${#lists.size(userScore)} + ' ครั้ง'" style="color: #ffffff;"></a>
+            <br></br>
+            <a th:text="'รวม ' + ${sumScore} + ' คะแนน'" style="color: #ffffff"></a>
+            <br></br>
+            <div class="table-responsive">
+                <table class="table table-striped mx-auto">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="score : ${userScore}">
+                            <td th:text="${score.user.userID}"></td>
+                            <td th:text="${score.score}"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
-            <div class="col-12 col-lg-4">
-              <a href="/hangmanchord">
-              <div class="card box-shadow my-5 mx-auto" style="width: 18rem;">
-                <img src="chord.png" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                  
-                  <hr>
-                  <h5 class="card-text">ทะลุทะลวงตามล่าคอร์ด</h5>
-                </div>
-                
-              </div>
-          </a>
         </div>
     </div>
 </body>
-
 </html>
