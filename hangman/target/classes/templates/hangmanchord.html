@@ -90,13 +90,13 @@
   chordTriads['G'] = 'GBD';
   chordTriads['A'] = 'AC#E';
   chordTriads['B'] = 'BD#F#';
-  chordTriads['Cm'] = 'CD#G';
+  chordTriads['Cm'] = 'CEbG';
   chordTriads['Dm'] = 'DFA';
   chordTriads['Em'] = 'EGB';
-  chordTriads['Fm'] = 'FG#C';
-  chordTriads['Gm'] = 'GA#D';
+  chordTriads['Fm'] = 'FAbC';
+  chordTriads['Gm'] = 'GBbD';
   chordTriads['Am'] = 'ACE';
-  chordTriads['Bm'] = 'BDF#';
+  chordTriads['Bm'] = 'BDGb';
   let selectedChord = '';
   let selectedTriads = '';
   let guessedWord = [];
@@ -234,7 +234,7 @@
   }
 
   function createLetterButtons() {
-    const note = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const note = ['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'];
     for (let letter of note) {
       const letterButton = document.createElement('span');
       letterButton.classList.add('letter');
@@ -249,8 +249,14 @@
   function checkLetter(letter) {
     if (letter.length == 1 && selectedTriads.includes(letter)) {
       let letterCheck = false;
+      let checkSemi = '';
+      if (selectedChord[length - 1] == 'm'){
+        checkSemi = 'b';
+      } else {
+        checkSemi = '#';
+      }
       for (let i = 0; i < selectedTriads.length - 1; i++) {
-        if (selectedTriads[i] == letter && selectedTriads[i + 1] == '#') {
+        if (selectedTriads[i] == letter && selectedTriads[i + 1] == checkSemi) {
           incorrectLetters.push(letter);
           updateLettersDisplay();
           incorrectGuessCount++;
@@ -298,7 +304,6 @@
       earnScore.textContent = score;
     } else if (incorrectGuessCount === 7) {
       document.getElementById('message').innerText = `เสียใจด้วย คุณแพ้ โน๊ตที่ถูกต้องคือ ${selectedTriads}`;
-      score = 0;
       gamestart = false;
       scoreText.hidden = false;
       earnScore.textContent = score;
