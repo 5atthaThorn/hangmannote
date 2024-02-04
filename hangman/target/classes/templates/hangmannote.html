@@ -7,30 +7,30 @@
     <title>เกมดนตรีหรรษา By ครูพี่ไม้</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Symbola&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
     <link rel="stylesheet" type="text/css" href="style.css" />
     <style>
       .letter-box {
-          width: 50px;
-          height: 50px;
-          margin: 5px;
-          font-size: 20px;
-          display: inline-block; /* Display letters in a row */
-      }
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      font-size: 20px;
+      display: inline-block; /* Display letters in a row */
+    }
 
-      /* Style each letter box */
-      .letter {
-          display: inline-block;
-          width: 40px;
-          height: 40px;
-          margin: 5px;
-          text-align: center;
-          line-height: 40px;
-          background-color: #FFFFFF; /* Bootstrap primary color */
-          color: #000; /* Text color */
-          border-radius: 5px; /* Rounded corners */
-          cursor: pointer; /* Cursor on hover */
-      }
+    /* Style each image button */
+    .image-button {
+      display: inline-block;
+      margin: 5px;
+      text-align: center;
+      line-height: 40px;
+      background-color: #FFFFFF; /* Bootstrap primary color */
+      color: #000; /* Text color */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer; /* Cursor on hover */
+    }
     </style>
 </head>
 <header>
@@ -68,12 +68,12 @@
     <div id="timer" style="color: #FFFFFF">เหลือเวลา <span id="timer-count" style="color: #FFFFFF"></span> วินาที</div>
     <canvas id="hangmanCanvas" width="200" height="200"></canvas>
     <div id="guess-note" style="color: #FFFFFF">ผสมโน้ตให้ได้</div>
-    <div id="guess-note-symbol" style="color: #FFFFFF; font-size: 50px;"></div>
+    <div id="guess-note-symbol" class="center rounded container mt-5" style="background-color: #FFFFFF; max-width: 70px;"></div>
     <div id="answer-text" style="color: #FFFFFF;">เฉลย <span id="answer" style="color: #FFFFFF"></span></div>
     
     <div class="container mt-5">
       <div class="row">       
-          <input type="text" id="input-word" class="form-control">
+          <div id="input-note" class="rounded container" style="background-color: #FFFFFF;"></div>
       </div>
       <br>
       <div class="row">
@@ -102,7 +102,6 @@
   </div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-  
   const guessList = ['𝅝','𝅝','𝅗𝅥','𝅗𝅥','𝅗𝅥']
   const symbolList = {};
   symbolList[1] = ['𝅘𝅥','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
@@ -111,6 +110,17 @@
   symbolList[4] = ['𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   symbolList[5] = ['𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   //const symbolList = ['𝅝','𝅝.','𝅗𝅥','𝅗𝅥.','𝅘𝅥','𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
+  const symbolPath = {};
+  symbolPath['𝅝'] = 'wholenote.png';
+  symbolPath['𝅝.'] = 'wholenotedot.png';
+  symbolPath['𝅗𝅥'] = 'halfnote.png';
+  symbolPath['𝅗𝅥.'] = 'halfnotedot.png';
+  symbolPath['𝅘𝅥'] = 'quarternote.png';
+  symbolPath['𝅘𝅥.'] = 'quarternotedot.png';
+  symbolPath['𝅘𝅥𝅮'] = 'eightnote.png';
+  symbolPath['𝅘𝅥𝅮.'] = 'eightnotedot.png';
+  symbolPath['𝅘𝅥𝅯'] = 'sixteenthnote.png';
+  symbolPath['𝅘𝅥𝅯.'] = 'sixteenthnotedot.png';
   let symbolDic = {};
   symbolDic['𝅝'] = 4;
   symbolDic['𝅗𝅥'] = 2;
@@ -126,22 +136,19 @@
   let roundScore = 2.0;
   let currentRound = 1;
   const round = 5;
+  let enteredWord = '';
 
   const canvas = document.getElementById('hangmanCanvas');
   const ctx = canvas.getContext('2d');
 
   const letterBox = document.getElementById('letter-box');
-  const inputWord = document.getElementById('input-word');
+  const inputNote = document.getElementById('input-note');
   const timerCount = document.getElementById('timer-count');
   const guessSymbol = document.getElementById('guess-note-symbol');
   const earnScore = document.getElementById('earn-score');
   const scoreText = document.getElementById('score-text');
   const timerText = document.getElementById('timer');
   const roundNumber = document.getElementById('round-number');
-
-  inputWord.addEventListener('keydown', function(event) {
-    event.preventDefault();
-  });
 
   function nextRound() {
     if (currentRound < round) {
@@ -177,8 +184,16 @@
 
   //สุ่มโน้ตเพื่อทาย
   function setGuessNote(){
+    const maxButtonSize = 50;
     guessNote = guessList[currentRound - 1];
-    guessSymbol.textContent = guessNote;
+    const imgElement = document.createElement('img');
+    imgElement.src = symbolPath[guessNote];
+    imgElement.alt = guessNote;
+    imgElement.style.maxWidth = `${maxButtonSize}px`;
+    imgElement.style.maxHeight = `${maxButtonSize}px`;
+
+  // Append the img element to the letterBox container
+    guessSymbol.appendChild(imgElement);
   }
 
   //วาดตัว Hangman
@@ -257,27 +272,44 @@
 
   // สร้างปุ่มกดบนจอ
   function createLetterButtons() {
+    const maxButtonSize = 50; // Set your desired maximum size in pixels
+
     for (let letter of symbolList[currentRound]) {
-      if (letter != guessNote) {
-        const letterButton = document.createElement('span');
-        letterButton.classList.add('letter');
-        letterButton.innerText = letter;
-        letterButton.addEventListener('click', function() {
-          addLetterToInput(letter);
-        });
-        letterBox.appendChild(letterButton);
-      }
+      const imageButton = document.createElement('img');
+      imageButton.classList.add('image-button');
+      imageButton.src = symbolPath[letter];
+      imageButton.alt = letter;
+
+      // Set maximum width and height
+      imageButton.style.maxWidth = `${maxButtonSize}px`;
+      imageButton.style.maxHeight = `${maxButtonSize}px`;
+
+      imageButton.addEventListener('click', function () {
+        const clickedValue = letter;
+        addLetterToInput(clickedValue);
+      });
+
+      letterBox.appendChild(imageButton);
     }
   }
 
+
   // กดปุ่มบนจอ
   function addLetterToInput(letter) {
-    inputWord.value += letter;
-  }
+    const maxButtonSize = 50;
+    enteredWord += letter;
+    const imgElement = document.createElement('img');
+    imgElement.src = symbolPath[letter];
+    imgElement.alt = letter;
+    imgElement.style.maxWidth = `${maxButtonSize}px`;
+    imgElement.style.maxHeight = `${maxButtonSize}px`;
+
+  // Append the img element to the letterBox container
+    inputNote.appendChild(imgElement);
+    }
 
   // ตรวจคำตอบ
   function submitWord() {
-    const enteredWord = inputWord.value;
     let sumNote = 0.0;
     if (enteredWord.includes('.')) {
       let noteSymbol = '';
@@ -330,9 +362,7 @@
         endedgame();
       }
     }
-
-    // เคลียร์กล่องคำตอบถ้าตอบผิด
-    inputWord.value = '';
+    clearButton();
   }
 
   // ตัวจับเวลา
@@ -384,7 +414,10 @@
 
   // ปุ่มเคลียร์กล่องคำตอบ
   function clearButton() {
-    inputWord.value = '';
+    while (inputNote.firstChild) {
+      inputNote.removeChild(inputNote.firstChild);
+    }
+    enteredWord = '';
   }
 
 
