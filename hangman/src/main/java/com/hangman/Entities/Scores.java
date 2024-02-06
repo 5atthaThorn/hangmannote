@@ -17,6 +17,8 @@ public class Scores {
     private int scoreID;
     @Column(name="score")
     private double score;
+    @Column(name="timestamp")
+    private String timeStamp;
     @ManyToOne
     @JoinColumn(name="userID")
     private Users user;
@@ -38,5 +40,10 @@ public class Scores {
     public void setUser(Users user) {
         this.user = user;
     }
-    
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }

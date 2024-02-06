@@ -17,11 +17,11 @@
 }
 
 body {
-  background-color: #FFB606;
+  background-color: #bbe4e9;
 }
 
 header{
-  background-color: #2C2C2C;
+  background-color: #5585b5;
   padding: 10px 0;
 }
 
@@ -85,7 +85,7 @@ table .row:nth-child(odd) {
 }
 
 .center {
-  background-color: #2C2C2C;
+  background-color: #53a8b6;
   text-align: center;
 }
 .center h1 {

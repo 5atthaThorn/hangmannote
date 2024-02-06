@@ -1,5 +1,8 @@
 package com.hangman.Controllers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +38,12 @@ public class restController {
             if (currentUser == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
             }
-            // Save the score for the current user
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String timeStamp = now.format(formatter);
             Scores scores = new Scores();
             scores.setScore(score);
+            scores.setTimeStamp(timeStamp);
             scores.setUser(currentUser);
             scoresRepository.save(scores);
 
