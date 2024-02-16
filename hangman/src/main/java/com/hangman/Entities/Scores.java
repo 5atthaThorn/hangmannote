@@ -19,6 +19,8 @@ public class Scores {
     private double score;
     @Column(name="timestamp")
     private String timeStamp;
+    @Column(name="gamename")
+    private String gameName;
     @ManyToOne
     @JoinColumn(name="userID")
     private Users user;
@@ -45,5 +47,11 @@ public class Scores {
     }
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+    public String getGameName() {
+        return gameName;
+    }
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 }

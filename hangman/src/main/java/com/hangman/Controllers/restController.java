@@ -2,6 +2,7 @@ package com.hangman.Controllers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,11 @@ public class restController {
     }
 
     @PostMapping("/savescore")
-    public ResponseEntity<String> saveScore(@RequestBody double score, HttpSession session) {
+    public ResponseEntity<String> saveScore(@RequestBody Map<String, Object> scoreData, HttpSession session) {
         try {
             // Retrieve the current user from the session using the correct key
+            double score = ((Number) scoreData.get("score")).doubleValue();
+            String gameName = (String) scoreData.get("gameName");
             Users currentUser = (Users) session.getAttribute("user");
 
             // Check if a user is logged in
@@ -45,6 +48,7 @@ public class restController {
             scores.setScore(score);
             scores.setTimeStamp(timeStamp);
             scores.setUser(currentUser);
+            scores.setGameName(gameName);
             scoresRepository.save(scores);
 
             return ResponseEntity.ok("Score has been saved.");

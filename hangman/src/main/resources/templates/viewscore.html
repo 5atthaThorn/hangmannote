@@ -45,6 +45,8 @@
         <div class="p-4 rounded border">
             <h1>ประวัติการเล่น</h1>
             <br></br>
+            <a th:text="'Username: ' + ${userScore[0].user.username}" style="color: #ffffff;"></a>
+            <br></br>
             <a th:text="'เล่นทั้งหมด ' + ${#lists.size(userScore)} + ' ครั้ง'" style="color: #ffffff;"></a>
             <br></br>
             <a th:text="'รวม ' + ${sumScore} + ' คะแนน'" style="color: #ffffff"></a>
@@ -53,16 +55,16 @@
                 <table class="table table-striped mx-auto">
                     <thead>
                         <tr>
-                            <th>Username</th>
                             <th>Score</th>
                             <th>Timestamp</th>
+                            <th>Game Name</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="score : ${userScore}">
-                            <td th:text="${score.user.username}"></td>
                             <td th:text="${score.score}"></td>
                             <td th:text="${score.timeStamp}"></td>
+                            <td th:text="${score.gameName}"></td>
                         </tr>
                     </tbody>
                 </table>

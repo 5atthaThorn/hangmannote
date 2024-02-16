@@ -69,7 +69,7 @@
   <canvas id="hangmanCanvas" width="200" height="200"></canvas>
   <div id="guess" style="color: #FFFFFF">จงใส่โน้ตในคอร์ด <span id="guess-chord" style="color: #FFFFFF"></span></div>
   <div id="word-container" style="color: #FFFFFF; font-size: 25px;"></div>
-  <div id="letters-container" style="color:#A0A0A0"></div>
+  <div id="letters-container" style="color: #bbe4e9"></div>
   <div id="letter-box"></div>
   <div id="message" style="color: #FFFFFF"></div>
   <br>
@@ -81,7 +81,13 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+  
+  const gameName = "Hangman Chord";
+
+  // โจทย์
   const chordList = ['C','D','E','F','G','A','B','Cm','Dm','Em','Fm','Gm','Am','Bm'];
+  
+  // โน็ตในคอร์ด
   let chordTriads = {};
   chordTriads['C'] = 'CEG';
   chordTriads['D'] = 'DF#A';
@@ -101,16 +107,19 @@
   let selectedTriads = '';
   let guessedWord = [];
   let incorrectLetters = [];
-  let incorrectGuessCount = 0;
+  let incorrectGuessCount = 0; //จำนวนครั้งที่ตอบผิด
   let timer;
   let gamestart = true;
-  let score = 0.0;
-  let roundScore = 2.0;
-  const round = 5;
-  let currentRound = 1;
+  let score = 0.0; //คะแนนรวม
+  let roundScore = 2.0; //คะแนนในแต่ละรอบ
+  const round = 5; //จำนวนรอบ
+  let currentRound = 1; //รอบปัจจุบัน
+
+  // คอร์ดที่โดนเลือกไปแล้ว
+  let randomChordList = [];
+
   const canvas = document.getElementById('hangmanCanvas');
   const ctx = canvas.getContext('2d');
-
   const lettersContainer = document.getElementById('letters-container');
   const letterBox = document.getElementById('letter-box');
   const timerCount = document.getElementById('timer-count');
@@ -119,6 +128,7 @@
   const roundNumber = document.getElementById('round-number');
   const scoreText = document.getElementById('score-text');
 
+  // รอบถัดไป
   function nextRound() {
     if (currentRound < round) {
       currentRound++;
@@ -131,6 +141,7 @@
     }
   }
 
+  //รีเซตเกม
   function resetGame() {
     scoreText.hidden = true;
     incorrectGuessCount = 0;
@@ -153,8 +164,22 @@
     }
   }
 
+  //เลือกโจทย์
   function selectWord() {
-    selectedChord = chordList[Math.floor(Math.random() * chordList.length)];
+    let isRandomed = false;
+    
+    //ถ้าสุ่มเจออันเดิมให้สุ่มใหม่
+    while (isRandomed === false) {
+      let selectChord = chordList[Math.floor(Math.random() * chordList.length)];
+      if (!randomChordList.includes(selectChord)) {
+        randomChordList.push(selectChord);
+        selectedChord = selectChord;
+        isRandomed = true;
+        break;
+      } else {
+        continue;
+      }
+    }
     selectedTriads = chordTriads[selectedChord];
     guessedWord = Array(selectedTriads.length).fill('_');
     guessChord.textContent = selectedChord;
@@ -169,6 +194,7 @@
     document.getElementById('letters-container').innerText = incorrectLetters.join(', ');
   }
 
+  //วาดแฮงแมน
   function drawHangman() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "white";
@@ -233,6 +259,7 @@
     }
   }
 
+  //สร้างปุ่มกดบนหน้าจอ
   function createLetterButtons() {
     const note = ['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'];
     for (let letter of note) {
@@ -246,10 +273,12 @@
     }
   }
 
+  //ตรวจคำตอบ
   function checkLetter(letter) {
     if (letter.length == 1 && selectedTriads.includes(letter)) {
       let letterCheck = false;
       let checkSemi = '';
+      // เช็คว่าโจทย์เป็น minor หรือ major
       if (selectedChord[length - 1] == 'm'){
         checkSemi = 'b';
       } else {
@@ -313,6 +342,7 @@
     }
   }
 
+  //ตัวจับเวลา
   function startTimer() {
     let timeRemaining = 120;
     timerCount.textContent = timeRemaining;
@@ -338,14 +368,15 @@
     }, 1000);
   }
 
-  function saveScore() {
+   // บันทึกคะแนนลงฐานข้อมูล
+   function saveScore() {
     $.ajax({
-      type: 'POST',
-      url: '/api/savescore',
-      contentType: 'application/json',
-      data: JSON.stringify(score),
-      success: function(response) {
-        console.log('Success:', response);
+    type: 'POST',
+    url: '/api/savescore',
+    contentType: 'application/json',
+    data: JSON.stringify({"score": score, "gameName": gameName }),
+    success: function(response) {
+      console.log('Success:', response);
       },
       error: function(error) {
         console.error('Error:', error);
@@ -353,6 +384,7 @@
     });
   }
 
+  //ฟังก์เริ่มเกม เรียกใช้เมื่อขึนรอบใหม่
   function init() {
     roundNumber.textContent = currentRound;
     document.getElementById('next-round-btn').hidden = true;
@@ -361,10 +393,14 @@
     updateWordDisplay();
   }
 
+
+  //เริ่มเกมใหม่
   function restartGame() {
     location.reload();
   }
 
+
+  //เริ่มเกม
   init();
   document.getElementById('try-again').hidden = true;
   scoreText.hidden = true;

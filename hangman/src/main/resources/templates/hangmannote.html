@@ -69,7 +69,6 @@
     <canvas id="hangmanCanvas" width="200" height="200"></canvas>
     <div id="guess-note" style="color: #FFFFFF">ผสมโน้ตให้ได้</div>
     <div id="guess-note-symbol" class="center rounded container mt-5" style="background-color: #FFFFFF; max-width: 70px;"></div>
-    <div id="answer-text" style="color: #FFFFFF;">เฉลย <span id="answer" style="color: #FFFFFF"></span></div>
     
     <div class="container mt-5">
       <div class="row">       
@@ -102,14 +101,20 @@
   </div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+
+  const gameName = "Hangman Note";
+  //โจทย์
   const guessList = ['𝅝','𝅝','𝅗𝅥','𝅗𝅥','𝅗𝅥']
+  
+  // ตัวเลือกในโจทย์
   const symbolList = {};
   symbolList[1] = ['𝅘𝅥','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   symbolList[2] = ['𝅗𝅥.','𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯'];
   symbolList[3] = ['𝅘𝅥.','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   symbolList[4] = ['𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   symbolList[5] = ['𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
-  //const symbolList = ['𝅝','𝅝.','𝅗𝅥','𝅗𝅥.','𝅘𝅥','𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
+
+  // โหลดภาพตัวโน็ต
   const symbolPath = {};
   symbolPath['𝅝'] = 'wholenote.png';
   symbolPath['𝅝.'] = 'wholenotedot.png';
@@ -121,6 +126,8 @@
   symbolPath['𝅘𝅥𝅮.'] = 'eightnotedot.png';
   symbolPath['𝅘𝅥𝅯'] = 'sixteenthnote.png';
   symbolPath['𝅘𝅥𝅯.'] = 'sixteenthnotedot.png';
+  
+  //อัตราส่วนโน๊ต
   let symbolDic = {};
   symbolDic['𝅝'] = 4;
   symbolDic['𝅗𝅥'] = 2;
@@ -128,14 +135,14 @@
   symbolDic['𝅘𝅥𝅮'] = 0.5;
   symbolDic['𝅘𝅥𝅯'] = 0.25;
   let guessedWord = [];
-  let incorrectGuessCount = 0;
+  let incorrectGuessCount = 0; //นับตอบผิด
   let timer;
   let gamestart = false;
   let guessNote = '';
-  let score = 0.0;
-  let roundScore = 2.0;
-  let currentRound = 1;
-  const round = 5;
+  let score = 0.0; //คะแนนรวม
+  let roundScore = 2.0; //คะแนนในแต่ละรอบ
+  let currentRound = 1; //รอบ
+  const round = 5; //จำนวนรอบสูงสุด
   let enteredWord = '';
 
   const canvas = document.getElementById('hangmanCanvas');
@@ -150,6 +157,7 @@
   const timerText = document.getElementById('timer');
   const roundNumber = document.getElementById('round-number');
 
+  // ขึ้นรอบใหม่
   function nextRound() {
     if (currentRound < round) {
       currentRound++;
@@ -162,7 +170,10 @@
     }
   }
 
+  // รีเซตเกม
   function resetGame() {
+    guessSymbol.removeChild(guessSymbol.firstChild);
+    clearButton();
     scoreText.hidden = true;
     incorrectGuessCount = 0;
     roundScore = 2.0;
@@ -191,8 +202,6 @@
     imgElement.alt = guessNote;
     imgElement.style.maxWidth = `${maxButtonSize}px`;
     imgElement.style.maxHeight = `${maxButtonSize}px`;
-
-  // Append the img element to the letterBox container
     guessSymbol.appendChild(imgElement);
   }
 
@@ -296,37 +305,35 @@
 
   // กดปุ่มบนจอ
   function addLetterToInput(letter) {
-    const maxButtonSize = 50;
+    const maxButtonSize = 40;
     enteredWord += letter;
     const imgElement = document.createElement('img');
     imgElement.src = symbolPath[letter];
     imgElement.alt = letter;
     imgElement.style.maxWidth = `${maxButtonSize}px`;
     imgElement.style.maxHeight = `${maxButtonSize}px`;
-
-  // Append the img element to the letterBox container
     inputNote.appendChild(imgElement);
     }
 
   // ตรวจคำตอบ
   function submitWord() {
     let sumNote = 0.0;
+
+    //ตรวจว่ามีประจุดในคำตอบไหม
     if (enteredWord.includes('.')) {
       let noteSymbol = '';
       let dotCount = 0;
       for (let letter of enteredWord) {
+        //บวกอัตราส่วนโน็ตก่อน แล้วบวกประจุดคูณกับจำนวนประจุด
         let currentSymbol = letter;
-        console.log(letter);
         if (currentSymbol == '.') {
           dotCount++;
-          console.log(dotCount);
           sumNote += symbolDic[noteSymbol] / 2*dotCount;
         } else {
           dotCount = 0;
           noteSymbol = currentSymbol;
           sumNote += symbolDic[noteSymbol];
         }
-        console.log(sumNote);
       }
     } else {
       for (let char of enteredWord ){
@@ -335,8 +342,6 @@
     }
     if (sumNote === symbolDic[guessNote]) {
       document.getElementById('message').innerText = 'ยินดีด้วย คุณชนะ!';
-      document.getElementById('answer').innerText = enteredWord;
-      document.getElementById('answer-text').hidden = false;
       gamestart = false;
       score += roundScore;
       letterBox.hidden = true;
@@ -355,6 +360,7 @@
     } else {
       incorrectGuessCount++;
       drawHangman();
+      clearButton();
 
       if (incorrectGuessCount === 7) {
         document.getElementById('message').innerText = `เสียใจด้วย คุณแพ้`;
@@ -362,7 +368,7 @@
         endedgame();
       }
     }
-    clearButton();
+    
   }
 
   // ตัวจับเวลา
@@ -393,20 +399,18 @@
     }, 1000);
   }
 
-  // บันทึกลงฐานข้อมูล
+  // บันทึกคะแนนลงฐานข้อมูล
   function saveScore() {
     $.ajax({
     type: 'POST',
     url: '/api/savescore',
     contentType: 'application/json',
-    data: JSON.stringify(score),
+    data: JSON.stringify({"score": score, "gameName": gameName }),
     success: function(response) {
       console.log('Success:', response);
-      // Handle success response from the server
       },
       error: function(error) {
         console.error('Error:', error);
-        // Handle error
       }
     });
   }
@@ -426,7 +430,6 @@
     roundNumber.textContent = currentRound;
     letterBox.hidden = false;
     scoreText.hidden = true;
-    document.getElementById('answer-text').hidden = true;
     document.getElementById('try-again').hidden = true;
     document.getElementById('next-round-btn').hidden = true;
     setGuessNote();
