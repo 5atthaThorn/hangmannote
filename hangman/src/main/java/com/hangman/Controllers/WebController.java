@@ -38,6 +38,19 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "loginpage";
+    }
+
+    @GetMapping("/hangmannotestart")
+    public String hangmanNoteStart(HttpSession session) {
+        if (isLogin(session)) {
+            return "hangmannotestart";
+        }
+        return "redirect:/login";
+    }
+    
     @GetMapping("/hangmannote")
     public String hangmanNote(HttpSession session) {
         if (isLogin(session)) {
@@ -46,11 +59,23 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "loginpage";
+    @GetMapping("/hangmanchordstart")
+    public String hangmanChordStart(HttpSession session) {
+        if (isLogin(session)) {
+            return "hangmanchordstart";
+        }
+        return "redirect:/login";
     }
 
+    @GetMapping("/hangmanchord")
+    public String hangmanChord(HttpSession session) {
+        if (isLogin(session)) {
+            return "hangmanchord";
+        }
+        return "redirect:/login";
+    }
+
+    //รับค่าจากฟอร์ม log in เช็คว่า ถูกมั้ย
     @PostMapping("/login")
     public String getLogin(@RequestParam("username") String username,
             @RequestParam("password") String password, HttpSession session) {
@@ -98,14 +123,7 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping("/hangmanchord")
-    public String hangmanchord(HttpSession session) {
-        if (isLogin(session)) {
-            return "hangmanchord";
-        }
-        return "redirect:/login";
-    }
-
+    //ดึงข้อมูลบนตาราง score มาดูของคนที่ล็อคอินอยู่ ทำการรวมผลคะแนนทั้งหมด
     @GetMapping("/viewscore")
     public String viewscore(HttpSession session, Model model) {
         if (isLogin(session)) {

@@ -22,6 +22,7 @@ public class restController {
     @Autowired
     private ScoresRepository scoresRepository;
 
+    //log in ผ่าน ขอ user id ได้มั้ย
     @PostMapping("/getusersession")
     public ResponseEntity<String> getUserSession(@RequestBody Users user, HttpSession session) {
         // Store the current user in the session
@@ -29,6 +30,7 @@ public class restController {
         return ResponseEntity.ok("User session received successfully");
     }
 
+    //save คะแนนที่ได้ลงฐานข้อมูล เวลาปัจจุบันในตอน save 
     @PostMapping("/savescore")
     public ResponseEntity<String> saveScore(@RequestBody Map<String, Object> scoreData, HttpSession session) {
         try {

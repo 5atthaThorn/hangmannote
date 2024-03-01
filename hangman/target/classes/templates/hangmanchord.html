@@ -36,7 +36,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-          <a class="navbar-brand" href="/">เกมดนตรีหรรษา By ครูพี่ไม้</a>
+          <a class="navbar-brand" href="/">เกมดนตรีหรรษา</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -44,10 +44,10 @@
           <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav">
                   <li class="nav-item">
-                      <a class="nav-link" href="/hangmannote">รวมผลตัวโน๊ต</a>
+                      <a class="nav-link" href="/hangmannotestart">รวมผลตัวโน๊ต</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="/hangmanchord">ทะลุทะลวงตามล่าคอร์ด</a>
+                      <a class="nav-link" href="/hangmanchordstart">ทะลุทะลวงตามล่าคอร์ด</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="/viewscore">ประวัติการเล่น</a>
@@ -64,7 +64,7 @@
 
 <div class="center container mt-5 rounded" style="max-width: 500px;">
   <br>
-  <div id="round" style="color: #FFFFFF;">ข้อที่ <span id="round-number" style="color: #FFFFFF"></span></div>
+  <div id="round" style="color: #FFFFFF;">ข้อที่ <span id="round-number" style="color: #FFFFFF"></span> / <span id="all-round-number"></span></div>
   <div id="timer" style="color: #FFFFFF">เหลือเวลา <span id="timer-count" style="color: #FFFFFF"></span> วินาที</div>
   <canvas id="hangmanCanvas" width="200" height="200"></canvas>
   <div id="guess" style="color: #FFFFFF">จงใส่โน้ตในคอร์ด <span id="guess-chord" style="color: #FFFFFF"></span></div>
@@ -85,23 +85,43 @@
   const gameName = "Hangman Chord";
 
   // โจทย์
-  const chordList = ['C','D','E','F','G','A','B','Cm','Dm','Em','Fm','Gm','Am','Bm'];
+  const chordList = ['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B','Cm','C#m','Dbm','Dm','D#m','Ebm','Em','Fm','F#m','Gbm','Gm','G#m','Abm','Am','A#m','Bbm','Bm'];
   
   // โน็ตในคอร์ด
   let chordTriads = {};
   chordTriads['C'] = 'CEG';
+  chordTriads['C#'] = 'C#FG#';
+  chordTriads['Db'] = 'DbFAb';
   chordTriads['D'] = 'DF#A';
+  chordTriads['D#'] = 'D#GA#';
+  chordTriads['Eb'] = 'EbGBb';
   chordTriads['E'] = 'EG#B';
   chordTriads['F'] = 'FAC';
+  chordTriads['F#'] = 'F#A#C#';
+  chordTriads['Gb'] = 'GbBbDb';
   chordTriads['G'] = 'GBD';
+  chordTriads['G#'] = 'G#CD#';
+  chordTriads['Ab'] = 'AbCEb';
   chordTriads['A'] = 'AC#E';
+  chordTriads['A#'] = 'A#DF';
+  chordTriads['Bb'] = 'BbDF';
   chordTriads['B'] = 'BD#F#';
   chordTriads['Cm'] = 'CEbG';
+  chordTriads['C#m'] = 'C#EG';
+  chordTriads['Dbm'] = 'DEAb';
   chordTriads['Dm'] = 'DFA';
+  chordTriads['D#m'] = 'D#F#A#';
+  chordTriads['Ebm'] = 'EbGbBb';
   chordTriads['Em'] = 'EGB';
   chordTriads['Fm'] = 'FAbC';
+  chordTriads['F#m'] = 'F#AC#';
+  chordTriads['Gbm'] = 'GbADb';
   chordTriads['Gm'] = 'GBbD';
+  chordTriads['G#m'] = 'G#BD#';
+  chordTriads['Abm'] = 'AbBEb';
   chordTriads['Am'] = 'ACE';
+  chordTriads['A#m'] = 'A#C#F';
+  chordTriads['Bbm'] = 'BbDbF';
   chordTriads['Bm'] = 'BDGb';
   let selectedChord = '';
   let selectedTriads = '';
@@ -112,7 +132,7 @@
   let gamestart = true;
   let score = 0.0; //คะแนนรวม
   let roundScore = 2.0; //คะแนนในแต่ละรอบ
-  const round = 5; //จำนวนรอบ
+  const round = 10; //จำนวนรอบ
   let currentRound = 1; //รอบปัจจุบัน
 
   // คอร์ดที่โดนเลือกไปแล้ว
@@ -279,7 +299,7 @@
       let letterCheck = false;
       let checkSemi = '';
       // เช็คว่าโจทย์เป็น minor หรือ major
-      if (selectedChord[length - 1] == 'm'){
+      if (selectedChord.includes('b')) {
         checkSemi = 'b';
       } else {
         checkSemi = '#';
@@ -344,7 +364,7 @@
 
   //ตัวจับเวลา
   function startTimer() {
-    let timeRemaining = 120;
+    let timeRemaining = 240;
     timerCount.textContent = timeRemaining;
 
     timer = setInterval(function() {
@@ -403,10 +423,32 @@
   //เริ่มเกม
   init();
   document.getElementById('try-again').hidden = true;
+  document.getElementById('all-round-number').textContent = round;
   scoreText.hidden = true;
   startTimer();
 
 </script>
-
+<br>
+<br>
 </body>
+<footer>
+  <div class="footer-content">
+      <div class="container mt-5">
+          <div class="row">
+              <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
+                  <p>ผู้พัฒนา</p>
+                  <p style="color:#ACACAC;">นายชตฤณ สุวรรณรัตน์</p>
+                  <p style="color:#ACACAC;">นางสาวอชิรญา ศรีโพธิ์</p>
+              </div>
+              <div class="col-lg-7 col-md-12">
+                  <p>ติดต่อ</p>
+                  <p style="color:#ACACAC;">Email: chatrin.suwannarat@gmail.com</p>
+                  <p style="color:#ACACAC;">Tel: 0619682842 หรือ 0957615786</p>
+              </div>
+          </div>
+      </div>
+  </div>
+  <br>
+  <br>
+</footer>
 </html>

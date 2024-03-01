@@ -36,7 +36,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-          <a class="navbar-brand" href="/">เกมดนตรีหรรษา By ครูพี่ไม้</a>
+          <a class="navbar-brand" href="/">เกมดนตรีหรรษา</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -44,10 +44,10 @@
           <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav">
                   <li class="nav-item">
-                      <a class="nav-link" href="/hangmannote">รวมผลตัวโน๊ต</a>
+                      <a class="nav-link" href="/hangmannotestart">รวมผลตัวโน๊ต</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="/hangmanchord">ทะลุทะลวงตามล่าคอร์ด</a>
+                      <a class="nav-link" href="/hangmanchordstart">ทะลุทะลวงตามล่าคอร์ด</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="/viewscore">ประวัติการเล่น</a>
@@ -64,7 +64,7 @@
 
   <div class="center container mt-5 rounded" style="max-width: 500px;">
     <br>
-    <div id="round" style="color: #FFFFFF;">ข้อที่ <span id="round-number" style="color: #FFFFFF"></span></div>
+    <div id="round" style="color: #FFFFFF;">ข้อที่ <span id="round-number" style="color: #FFFFFF"></span> / <span id="all-round-number"></span></div>
     <div id="timer" style="color: #FFFFFF">เหลือเวลา <span id="timer-count" style="color: #FFFFFF"></span> วินาที</div>
     <canvas id="hangmanCanvas" width="200" height="200"></canvas>
     <div id="guess-note" style="color: #FFFFFF">ผสมโน้ตให้ได้</div>
@@ -110,9 +110,9 @@
   const symbolList = {};
   symbolList[1] = ['𝅘𝅥','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
   symbolList[2] = ['𝅗𝅥.','𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯'];
-  symbolList[3] = ['𝅘𝅥.','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
-  symbolList[4] = ['𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
-  symbolList[5] = ['𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
+  symbolList[3] = ['𝅘𝅥','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
+  symbolList[4] = ['𝅘𝅥.','𝅘𝅥𝅮.','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
+  symbolList[5] = ['𝅘𝅥.','𝅘𝅥𝅮','𝅘𝅥𝅯','𝅘𝅥𝅯.'];
 
   // โหลดภาพตัวโน็ต
   const symbolPath = {};
@@ -138,13 +138,14 @@
   let incorrectGuessCount = 0; //นับตอบผิด
   let timer;
   let gamestart = false;
-  let guessNote = '';
+  let guessNote = ''; //ได้โจทย์อะไรออกมา
   let score = 0.0; //คะแนนรวม
   let roundScore = 2.0; //คะแนนในแต่ละรอบ
   let currentRound = 1; //รอบ
-  const round = 5; //จำนวนรอบสูงสุด
+  const round = 5; //จำนวนรอบสูงสุดหรือตามความยาวโทย์
   let enteredWord = '';
 
+  //ค่าที่แสดงในตัวเว็บ
   const canvas = document.getElementById('hangmanCanvas');
   const ctx = canvas.getContext('2d');
 
@@ -157,7 +158,7 @@
   const timerText = document.getElementById('timer');
   const roundNumber = document.getElementById('round-number');
 
-  // ขึ้นรอบใหม่
+  // ขึ้นรอบใหม่โดยเคลียข้อมูลจากรอบแรกก่อน
   function nextRound() {
     if (currentRound < round) {
       currentRound++;
@@ -327,8 +328,8 @@
         //บวกอัตราส่วนโน็ตก่อน แล้วบวกประจุดคูณกับจำนวนประจุด
         let currentSymbol = letter;
         if (currentSymbol == '.') {
-          dotCount++;
-          sumNote += symbolDic[noteSymbol] / 2*dotCount;
+          dotCount++; //เพิ่มตัวนับประจุด
+          sumNote += symbolDic[noteSymbol] / 2*dotCount; //เอาตัวโน๊ตที่เจอก่อนหน้าขึ้นมา แล้วเอาตำแหน่งจุดคูณ2 และหารด้วยตำแหน่งจุด *2
         } else {
           dotCount = 0;
           noteSymbol = currentSymbol;
@@ -455,8 +456,30 @@
 
   // เรียกฟังก์ชันเริ่มเกม
   init()
+  document.getElementById('all-round-number').textContent = round;
   startTimer();
 </script>
-
+<br>
+<br>
 </body>
+<footer>
+  <div class="footer-content">
+      <div class="container mt-5">
+          <div class="row">
+              <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
+                  <p>ผู้พัฒนา</p>
+                  <p style="color:#ACACAC;">นายชตฤณ สุวรรณรัตน์</p>
+                  <p style="color:#ACACAC;">นางสาวอชิรญา ศรีโพธิ์</p>
+              </div>
+              <div class="col-lg-7 col-md-12">
+                  <p>ติดต่อ</p>
+                  <p style="color:#ACACAC;">Email: chatrin.suwannarat@gmail.com</p>
+                  <p style="color:#ACACAC;">Tel: 0619682842 หรือ 0957615786</p>
+              </div>
+          </div>
+      </div>
+  </div>
+  <br>
+  <br>
+</footer>
 </html>

@@ -43,32 +43,16 @@
     <br></br>
     <div class="center container pt-5 rounded">
         <div class="p-4 rounded border">
-            <h1>ประวัติการเล่น</h1>
-            <br></br>
-            <a th:text="'Username: ' + ${userScore[0].user.username}" style="color: #ffffff;"></a>
-            <br></br>
-            <a th:text="'เล่นทั้งหมด ' + ${#lists.size(userScore)} + ' ครั้ง'" style="color: #ffffff;"></a>
-            <br></br>
-            <a th:text="'รวม ' + ${sumScore} + ' คะแนน'" style="color: #ffffff"></a>
-            <br></br>
-            <div class="table-responsive">
-                <table class="table table-striped mx-auto">
-                    <thead>
-                        <tr>
-                            <th>Score</th>
-                            <th>Timestamp</th>
-                            <th>Game Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="score : ${userScore}">
-                            <td th:text="${score.score}"></td>
-                            <td th:text="${score.timeStamp}"></td>
-                            <td th:text="${score.gameName}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <H1>กติกาเกมทะลุทะลวงตามล่าคอร์ด</H1>
+            <br>
+            <p style="text-align: left;">จงรวมตัวโน๊ตให้ตามที่คอร์ดที่กำหนด โดยมีโจทย์ทั้งหมด 10 ข้อ</p>
+            <p style="text-align: left;">- ข้อละ 2 คะแนน</p>
+            <p style="text-align: left;">- มีเวลาให้ 4 นาที</p>
+            <p style="text-align: left;">- หากตอบผิดหักคคะแนนคครั้งละ 0.25 คะแนน</p>
+            <p style="text-align: left;">- ในแต่ละข้อผิดได้ไม่เกิน 7 หากเกินเกมจะจบทันที</p>
+            <br>
+            <button class="btn btn-primary" onclick="window.location.href='/hangmanchord'">เริ่มเกม</button>
+
         </div>
         <br></br>
     </div>
